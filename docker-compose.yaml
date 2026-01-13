@@ -1,0 +1,35 @@
+services:
+  pgbackweb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pgbackweb:local
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PBW_BACKUP_PASSWORD: "c1e537e81cb5f3fa52467285c813df1b5c4e33bdd91ec28a4d258f092e32d52d" # Optional password for ZIP files (both local and S3) 
+      PBW_ENCRYPTION_KEY: "c1e537e81cb5f3fa52467285c813df1b5c4e33bdd91ec28a4d258f092e32d52d" # change for production
+      PBW_POSTGRES_CONN_STRING: "postgresql://postgres:password@postgres:5432/pgbackweb?sslmode=disable"
+      PBW_LISTEN_HOST: 0.0.0.0
+      PBW_LISTEN_PORT: "8085"
+    ports:
+      - "8085:8085" # access UI at http://localhost:8085
+    volumes:
+      - ./backups:/backups # optional unless using local storage
+
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: pgbackweb
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/docker/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
