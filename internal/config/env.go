@@ -9,6 +9,7 @@ import (
 
 type Env struct {
 	PBW_ENCRYPTION_KEY       string `env:"PBW_ENCRYPTION_KEY,required"`
+	PBW_BACKUP_PASSWORD      string `env:"PBW_BACKUP_PASSWORD,required"`
 	PBW_POSTGRES_CONN_STRING string `env:"PBW_POSTGRES_CONN_STRING,required"`
 	PBW_LISTEN_HOST          string `env:"PBW_LISTEN_HOST" envDefault:"0.0.0.0"`
 	PBW_LISTEN_PORT          string `env:"PBW_LISTEN_PORT" envDefault:"8085"`
